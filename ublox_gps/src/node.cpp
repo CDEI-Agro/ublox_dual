@@ -615,7 +615,39 @@ void UbloxNode::subscribe() {
   }
 
   if (getRosBoolean(this, "publish.nmea")) {
-    gps_->subscribe_nmea([this](const std::string &sentence) {
+    gps_->subscribe_nmea([this](const std::string &sentenceIn) {
+
+      std::string sentence = sentenceIn;
+      // Remove last two characters (\r\n)
+      sentence.erase(sentence.size() - 2);
+      
+      // Check if nmea is valid
+      // Regex to match NMEA sentence structure
+      std::regex nmeaRegex(R"(^\$.+\*[0-9A-Fa-f]{2}$)");
+      if (!std::regex_match(sentence, nmeaRegex)) {
+          return;
+      }
+
+      // Find the position of *
+      size_t asteriskPos = sentence.find('*');
+
+      // Calculate checksum
+      uint8_t calculatedChecksum = 0;
+      for (size_t i = 1; i < asteriskPos; ++i) {
+          calculatedChecksum ^= sentence[i];
+      }
+
+      // Extract the checksum from the sentence
+      std::string checksumStr = sentence.substr(asteriskPos + 1, 2);
+      try{
+        uint8_t sentenceChecksum = std::stoi(checksumStr, nullptr, 16);
+        if (calculatedChecksum != sentenceChecksum){
+          return;
+        }
+      } catch (const std::exception& e){
+        return;
+      }
+
       nmea_msgs::msg::Sentence m;
       m.header.stamp = this->now();
       m.header.frame_id = frame_id_;
