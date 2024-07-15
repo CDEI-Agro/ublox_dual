@@ -1,8 +1,8 @@
 ublox_base:
   ros__parameters:
     debug: 0                    # Range 0-4 (0 means no debug statements will print)
-    device: /dev/ttyUSB0
-    frame_id: gps
+    device: /dev/ttyUSB1
+    frame_id: gps_base
     config_on_startup: false
     uart1:
       baudrate: 460800 #115200
@@ -11,11 +11,11 @@ ublox_base:
     publish:
       all: False
 
-ublox_rover:
+gps: # This is the rover
   ros__parameters:
     debug: 0                    # Range 0-4 (0 means no debug statements will print)
-    device: /dev/ttyACM0
-    frame_id: gps
+    device: /dev/ttyACM1
+    frame_id: gps_link
     config_on_startup: false
     uart1:
       baudrate: 115200
@@ -23,6 +23,9 @@ ublox_rover:
     
     publish:
       all: False
+      nmea: False
       nav:
         heading: True
-        cov: True
+        # relposned: True
+        # cov: True
+        # status: True

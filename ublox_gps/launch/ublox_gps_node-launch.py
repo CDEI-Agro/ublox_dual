@@ -36,7 +36,12 @@ import os
 
 import ament_index_python.packages
 import launch
-import launch_ros.actions
+from launch_ros.actions import Node, SetRemap
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, GroupAction, RegisterEventHandler, EmitEvent
+from launch_ros.substitutions import FindPackageShare
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
+from launch.conditions import IfCondition
 
 
 def generate_launch_description():
@@ -45,43 +50,67 @@ def generate_launch_description():
         'config')
     
     params = os.path.join(config_directory, 'params.yaml')
+    
+    # NTRIP Client
+    ntrip_ns = LaunchConfiguration('ntrip_ns')
+    ntrip_launch = LaunchConfiguration('ntrip_launch')
+    ntrip_ns_arg = DeclareLaunchArgument('ntrip_ns', default_value='ntrip', description='namespace of the NTRIP client package')
+    ntrip_launch_arg = DeclareLaunchArgument('ntrip_launch', default_value='true', description='wether to launch the NTRIP client')
+    ntrip = GroupAction(actions=[
+        SetRemap(src = ('/', ntrip_ns, '/nmea'), dst = ('/ublox_base/nmea')),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([PathJoinSubstitution([FindPackageShare("ntrip_client"), 'ntrip_client_launch.py'])]),
+            launch_arguments={'namespace': ntrip_ns,
+                            'host': 'catnet-ip.icgc.cat',
+                            'port': '2101',
+                            'mountpoint': 'VRS3M',
+                            'username': 'ignasiCDEI',
+                            'password': 'cdei2023'}.items(),
+            condition=IfCondition(ntrip_launch)
+        )
+    ])
 
     # Both ublox nodes
-    ublox_gps_node_lite = launch_ros.actions.Node(
+    base_node = Node(
         package='ublox_gps',
         executable='ublox_gps_node',
         name='ublox_base',
         output='both',
-        parameters=[params]
+        parameters=[params],
+        remappings=[('/rtcm', ('/', ntrip_ns, '/rtcm'))],
     )
-    ublox_gps_node_budget = launch_ros.actions.Node(
+    rover_node = Node(
         package='ublox_gps',
         executable='ublox_gps_node',
-        name='ublox_rover',
+        name='gps',
         output='both',
-        parameters=[params]
+        parameters=[params],
+        remappings=[('/rtcm', ('/', ntrip_ns, '/rtcm/unused'))], # This a subscribed topic that anyone is going to publish. Rover does not need ntrip corrections. 
     )
     
     # Event handlers for On Exit
-    lite_on_exit = launch.actions.RegisterEventHandler(
+    base_on_exit = RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
-            target_action=ublox_gps_node_lite,
-            on_exit=[launch.actions.EmitEvent(
+            target_action=base_node,
+            on_exit=[EmitEvent(
                 event=launch.events.Shutdown())],
         ))
-    budget_on_exit = launch.actions.RegisterEventHandler(
+    rover_on_exit = RegisterEventHandler(
         event_handler=launch.event_handlers.OnProcessExit(
-            target_action=ublox_gps_node_budget,
-            on_exit=[launch.actions.EmitEvent(
+            target_action=rover_node,
+            on_exit=[EmitEvent(
                 event=launch.events.Shutdown())],
         ))
-    
+        
     # Launch all
     nodes = [
-        ublox_gps_node_lite,
-        lite_on_exit,
-        ublox_gps_node_budget,
-        budget_on_exit,
+        ntrip_ns_arg,
+        ntrip_launch_arg,
+        ntrip,
+        base_node,
+        base_on_exit,
+        rover_node,
+        rover_on_exit,
     ]
     
     return launch.LaunchDescription(nodes)

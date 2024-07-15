@@ -473,13 +473,13 @@ void UbloxNode::getRosParams() {
 
   // Create publishers based on parameters
   if (getRosBoolean(this, "publish.nav.status")) {
-    nav_status_pub_ = this->create_publisher<ublox_msgs::msg::NavSTATUS>("navstatus", 1);
+    nav_status_pub_ = this->create_publisher<ublox_msgs::msg::NavSTATUS>("~/navstatus", 1);
   }
   if (getRosBoolean(this, "publish.nav.posecef")) {
     nav_posecef_pub_ = this->create_publisher<ublox_msgs::msg::NavPOSECEF>("navposecef", 1);
   }
   if (getRosBoolean(this, "publish.nav.cov")) {
-    nav_cov_pub_ = this->create_publisher<ublox_msgs::msg::NavCOV>("navcov", 1);
+    nav_cov_pub_ = this->create_publisher<ublox_msgs::msg::NavCOV>("~/navcov", 1);
   }
   if (getRosBoolean(this, "publish.nav.clock")) {
     nav_clock_pub_ = this->create_publisher<ublox_msgs::msg::NavCLOCK>("navclock", 1);
@@ -495,7 +495,7 @@ void UbloxNode::getRosParams() {
   }
   if (getRosBoolean(this, "publish.nmea")) {
     // Larger queue depth to handle all NMEA strings being published consecutively
-    nmea_pub_ = this->create_publisher<nmea_msgs::msg::Sentence>("nmea", 20);
+    nmea_pub_ = this->create_publisher<nmea_msgs::msg::Sentence>("~/nmea", 20);
   }
 
   // Create subscriber for RTCM correction data to enable RTK
