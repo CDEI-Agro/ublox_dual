@@ -1,0 +1,117 @@
+{
+	"type": "CFG-ITEM",
+	"items": [
+		{
+			"key": "0x10310020",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "L"
+		},
+		{
+			"key": "0x10310024",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "L"
+		},
+		{
+			"key": "0x40520001",
+			"value": 115200,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U4"
+		},
+		{
+			"key": "0x40530001",
+			"value": 460800,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U4"
+		},
+		{
+			"key": "0x30210001",
+			"value": 200,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U2"
+		},
+		{
+			"key": "0x209100bb",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x209100ca",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x209100c0",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x209100c5",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x209100ac",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x209100b1",
+			"value": 0,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x20910084",
+			"value": 1,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x20910007",
+			"value": 1,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x2091008e",
+			"value": 1,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U1"
+		},
+		{
+			"key": "0x30090008",
+			"value": 10,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "U2"
+		},
+		{
+			"key": "0x20090009",
+			"value": 2,
+			"layer": 2,
+			"action": "Set",
+			"valueType": "E1"
+		}
+	]
+}

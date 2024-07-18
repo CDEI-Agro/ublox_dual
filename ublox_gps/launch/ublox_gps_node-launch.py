@@ -51,11 +51,13 @@ def generate_launch_description():
     
     params = os.path.join(config_directory, 'params.yaml')
     
-    # NTRIP Client
+    # NTRIP Client arguments
     ntrip_ns = LaunchConfiguration('ntrip_ns')
     ntrip_launch = LaunchConfiguration('ntrip_launch')
     ntrip_ns_arg = DeclareLaunchArgument('ntrip_ns', default_value='ntrip', description='namespace of the NTRIP client package')
     ntrip_launch_arg = DeclareLaunchArgument('ntrip_launch', default_value='true', description='wether to launch the NTRIP client')
+
+    # NTRIP Client node
     ntrip = GroupAction(actions=[
         SetRemap(src = ('/', ntrip_ns, '/nmea'), dst = ('/ublox_base/nmea')),
         IncludeLaunchDescription(
@@ -104,11 +106,11 @@ def generate_launch_description():
         
     # Launch all
     nodes = [
-        ntrip_ns_arg,
-        ntrip_launch_arg,
-        ntrip,
-        base_node,
-        base_on_exit,
+        ntrip_ns_arg,       # You can comment
+        ntrip_launch_arg,   # all these lines
+        ntrip,              # if there is no
+        base_node,          # internet
+        base_on_exit,       # connection
         rover_node,
         rover_on_exit,
     ]
